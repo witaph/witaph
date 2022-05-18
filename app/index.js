@@ -13,7 +13,8 @@ import { content } from './content'
 
 class App extends React.Component {
     componentDidMount() {
-        fetch("http://localhost:8000/images")
+        // console.log('App.componentDidMount')
+        fetch("http://witaph.com/api/images")
             .then(res => res.json())
             .then(
                 (result) => {
