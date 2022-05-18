@@ -1,53 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import Image from './components/image'
-import { content } from './content'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-				// <Image
-				// 	src=''
-				// 	name=''
-				// 	tags={['']}
-                //  idx={0}
-				// />
+import ImageFeed from './components/imageFeed'
+import Login from './components/login'
+import NoPage from './components/noPage'
 
-class App extends React.Component {
-    componentDidMount() {
-        // console.log('App.componentDidMount')
-        fetch("http://witaph.com/api/images")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log('/images result: ', result)
-                    this.setState({
-                        images: result,
-                    })
-                },
-                (error) => {
-                    console.log('/images error: ', error)
-                }
-            )
-    }
+// const root = createRoot(
+    
+// )
 
-    render() {
-        // console.log('render, this.state: ', this.state)
-        return (
-            <div id='container'>
-                {this.state && this.state.images && this.state.images.map(imageData => <Image
-                    src={imageData.sourceURL}
-                    name={imageData.name}
-                    tags={imageData.tags}
-                    idx={imageData.imageID}
-                />)}
-                {content.map(imageData => <Image
-                    src={imageData.src}
-                    name={imageData.name}
-                    tags={imageData.tags}
-                    idx={imageData.idx}
-                />)}
-            </div>
-        )
-    }
-}
-
-ReactDOM.render(<App />, document.getElementById('app'))
+ReactDOM.render(
+    <BrowserRouter>
+        <Routes>
+            <Route path="/">
+                <Route index element={<ImageFeed />} />
+                <Route path="login" element={<Login />} />
+                <Route path="*" element={<NoPage />} />
+            </Route>
+        </Routes>
+    </BrowserRouter>,
+    document.getElementById('app')
+)
