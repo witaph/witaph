@@ -6,10 +6,6 @@ import ImageFeed from './components/imageFeed'
 import Login from './components/login'
 import NoPage from './components/noPage'
 
-// const root = createRoot(
-    
-// )
-
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
