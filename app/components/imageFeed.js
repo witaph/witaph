@@ -1,12 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import '../index.css'
 import Image from './image'
 import { content } from '../content'
+import { apiBaseUrl } from '../constants'
 
 export default class ImageFeed extends React.Component {
     componentDidMount() {
-        fetch("http://witaph.com/api/images")
+        fetch(`${apiBaseUrl}/images`)
             .then(res => res.json())
             .then(
                 (result) => {

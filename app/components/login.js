@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 
-const apiBaseUrl = 'http://localhost:8000/api'
+import { apiBaseUrl } from '../constants'
 
 class Login extends React.Component {
 	constructor(props) {
