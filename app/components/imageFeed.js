@@ -7,20 +7,23 @@ import { content } from '../content'
 import { apiBaseUrl } from '../constants'
 
 export default class ImageFeed extends React.Component {
-    componentDidMount() {
-        fetch(`${apiBaseUrl}/images`)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log('/images result: ', result)
-                    this.setState({
-                        images: result,
-                    })
-                },
-                (error) => {
-                    console.log('/images error: ', error)
-                }
-            )
+    async componentDidMount() {
+        const imagesRes = await fetch(`${apiBaseUrl}/images`)
+        const images = await imagesRes.json()
+        console.log('images: ', images)
+
+        this.setState({
+            images,
+        })
+
+        if (!localStorage.getItem('existingTags')) {
+            const tagsRes = await fetch(`${apiBaseUrl}/tags`)
+            const tagsResJson = await tagsRes.json()
+            const tags = tagsResJson.tags
+            console.log('tags: ', tags)
+
+            localStorage.setItem('existingTags', tags)
+        }
     }
 
     render() {

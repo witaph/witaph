@@ -15,6 +15,7 @@ class AddImage extends React.Component {
 			captureState: '',
 			captureCountry: '',
 			tags: '',
+			existingTags: [],
 		}
 
 		this.handleSourceChange = this.handleSourceChange.bind(this)
@@ -27,22 +28,32 @@ class AddImage extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this)
 	}
 
-	componentDidMount() {
-		fetch(`${apiBaseUrl}/verifyLogin`, {
+	async componentDidMount() {
+		const res = await fetch(`${apiBaseUrl}/verifyLogin`, {
 			headers: { 'x-access-token': localStorage.getItem('token') }
 		})
-		.then(
-			(res) => {
-				console.log('verifyLogin res: ', res)
-				if (res.status != 200) {
-					this.props.navigate('../')
-				}
-			},
-			(err) => {
-				console.log('verifyLogin err: ', err)
-				this.props.navigate('../')
+		console.log('verifyLogin res: ', res)
+
+		if (res.status != 200) {
+			this.props.navigate('../')
+		} else {
+			const existingTags = localStorage.getItem('existingTags')
+			console.log('localStorage.getItem(existingTags): ', existingTags)
+			if (existingTags) {
+				this.setState({
+					existingTags,
+				})
+			} else {
+				const tagsRes = await fetch(`${apiBaseUrl}/tags`)
+				const tagsResJson = await tagsRes.json()
+				const tags = tagsResJson.tags
+				console.log('fetched tags: ', tags)
+				localStorage.setItem('existingTags', tags)
+				this.setState({
+					existingTags: tags,
+				})
 			}
-		)
+		}
 	}
 
 	handleSourceChange(event) {
@@ -83,39 +94,40 @@ class AddImage extends React.Component {
 			<div>
 				<form onSubmit={this.handleSubmit}>
 					<label>
-						Image Source URL
+						Image Source URL: 
 						<input type="text" value={this.state.sourceURL} onChange={this.handleSourceChange} />
 					</label>
 					<br/>
 					<label>
-						Backup Source URL
+						Backup Source URL: 
 						<input type="text" value={this.state.sourceURL2} onChange={this.handleSource2Change} />
 					</label>
 					<br/>
 					<label>
-						Name
-						<input type="text" value={this.state.name} onChange={this.state.handleNameChange} />
+						Name: 
+						<input type="text" value={this.state.name} onChange={this.handleNameChange} />
 					</label>
 					<br/>
 					<label>
-						Date Captured
+						Date Captured: 
 						<input type="text" value={this.state.dateCaptured} onChange={this.handleDateChange} />
 					</label>
 					<br/>
 					<label>
-						State/Province
+						State/Province: 
 						<input type="text" value={this.state.captureState} onChange={this.handleCaptureStateChange} />
 					</label>
 					<br/>
 					<label>
-						Country
+						Country: 
 						<input type="text" value={this.state.country} onChange={this.handleCountryChange} />
 					</label>
 					<br/>
 					<label>
-						Tags
+						Tags: 
 						<input type="text" value={this.state.tags} onChange={this.handleTagsChange} />
 					</label>
+					<br/>
 					<input type="submit" value="Submit" onChange={this.handleSubmit} />
 				</form>
 			</div>
