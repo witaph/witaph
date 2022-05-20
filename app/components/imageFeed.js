@@ -4,16 +4,8 @@ import '../index.css'
 import Image from './image'
 import { content } from '../content'
 
-				// <Image
-				// 	src=''
-				// 	name=''
-				// 	tags={['']}
-                //  idx={0}
-				// />
-
 export default class ImageFeed extends React.Component {
     componentDidMount() {
-        // console.log('ImageFeed.componentDidMount')
         fetch("http://witaph.com/api/images")
             .then(res => res.json())
             .then(
@@ -30,7 +22,6 @@ export default class ImageFeed extends React.Component {
     }
 
     render() {
-        // console.log('render, this.state: ', this.state)
         return (
             <div id='container'>
                 {this.state && this.state.images && this.state.images.map(imageData => <Image
