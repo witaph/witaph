@@ -22,7 +22,12 @@ export default class ImageFeed extends React.Component {
             const tags = tagsResJson.tags
             console.log('tags: ', tags)
 
-            localStorage.setItem('existingTags', tags)
+            const tagsMapped = tags.map(tagRecord => ({
+                id: tagRecord.tagId,
+                name: tagRecord.tagText
+            }))
+
+            localStorage.setItem('existingTags', JSON.stringify(tagsMapped))
         }
     }
 

@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
+import ReactTags from 'react-tag-autocomplete'
 
 import { apiBaseUrl } from '../constants'
+import "./react-tags-styles.css"
 
 class AddImage extends React.Component {
 	constructor(props) {
@@ -14,7 +16,7 @@ class AddImage extends React.Component {
 			dateCaptured: '',
 			captureState: '',
 			captureCountry: '',
-			tags: '',
+			tags: [],
 			existingTags: [],
 		}
 
@@ -24,8 +26,11 @@ class AddImage extends React.Component {
 		this.handleDateChange = this.handleDateChange.bind(this)
 		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
 		this.handleCountryChange = this.handleCountryChange.bind(this)
-		this.handleTagsChange = this.handleTagsChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleTagDelete = this.handleTagDelete.bind(this)
+		this.handleTagAdd = this.handleTagAdd.bind(this)
+
+		this.reactTags = React.createRef()
 	}
 
 	async componentDidMount() {
@@ -37,7 +42,7 @@ class AddImage extends React.Component {
 		if (res.status != 200) {
 			this.props.navigate('../')
 		} else {
-			const existingTags = localStorage.getItem('existingTags')
+			const existingTags = JSON.parse(localStorage.getItem('existingTags'))
 			console.log('localStorage.getItem(existingTags): ', existingTags)
 			if (existingTags) {
 				this.setState({
@@ -46,9 +51,13 @@ class AddImage extends React.Component {
 			} else {
 				const tagsRes = await fetch(`${apiBaseUrl}/tags`)
 				const tagsResJson = await tagsRes.json()
-				const tags = tagsResJson.tags
-				console.log('fetched tags: ', tags)
-				localStorage.setItem('existingTags', tags)
+				const tagRecords = JSON.parse(tagsResJson.tags)
+				console.log('fetched tagRecords: ', tagRecords)
+				const tags = tagRecords.map(tagRecord => ({
+					id: tagRecord.tagID,
+					name: tagRecord.tagText,
+				}))
+				localStorage.setItem('existingTags', JSON.stringify(tags))
 				this.setState({
 					existingTags: tags,
 				})
@@ -80,8 +89,19 @@ class AddImage extends React.Component {
 		this.setState({ country: event.target.value })
 	}
 
-	handleTagsChange(event) {
-		this.setState({ tags: event.target.value })
+	handleTagAdd(tag) {
+		console.log('handleTagAdd, tag: ', tag)
+		const tags = [].concat(this.state.tags, tag)
+		console.log('current tags: ', tags)
+		this.setState({ tags })
+	}
+
+	handleTagDelete(index) {
+		console.log('handleTagDelete, index: ', index)
+		const tags = this.state.tags.slice(0)
+		tags.splice(index, 1)
+		console.log('current tags: ', tags)
+		this.setState({ tags })
 	}
 
 	handleSubmit(event) {
@@ -125,7 +145,15 @@ class AddImage extends React.Component {
 					<br/>
 					<label>
 						Tags: 
-						<input type="text" value={this.state.tags} onChange={this.handleTagsChange} />
+						<ReactTags
+							ref={this.reactTags}
+							tags={this.state.tags}
+							suggestions={this.state.existingTags}
+							onDelete={this.handleTagDelete}
+							onAddition={this.handleTagAdd}
+							allowNew={true}
+							minQueryLength={0}
+						/>
 					</label>
 					<br/>
 					<input type="submit" value="Submit" onChange={this.handleSubmit} />
