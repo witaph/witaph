@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import ReactTags from 'react-tag-autocomplete'
+import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
 import "./react-tags-styles.css"
@@ -69,7 +70,6 @@ class AddImage extends React.Component {
 	handleSourceChange(event) {
 		this.setState({
 			sourceURL: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -77,7 +77,6 @@ class AddImage extends React.Component {
 	handleSource2Change(event) {
 		this.setState({
 			sourceURL2: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -85,7 +84,6 @@ class AddImage extends React.Component {
 	handleNameChange(event) {
 		this.setState({
 			name: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -93,7 +91,6 @@ class AddImage extends React.Component {
 	handleDateChange(event) {
 		this.setState({
 			dateCaptured: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -101,7 +98,6 @@ class AddImage extends React.Component {
 	handleCaptureStateChange(event) {
 		this.setState({
 			captureState: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -109,7 +105,6 @@ class AddImage extends React.Component {
 	handleCountryChange(event) {
 		this.setState({
 			captureCountry: event.target.value,
-			error: null,
 			success: null,
 		})
 	}
@@ -120,7 +115,6 @@ class AddImage extends React.Component {
 		console.log('current tags: ', tags)
 		this.setState({
 			tags,
-			error: null,
 			success: null,
 		})
 	}
@@ -132,7 +126,6 @@ class AddImage extends React.Component {
 		console.log('current tags: ', tags)
 		this.setState({
 			tags,
-			error: null,
 			success: null,
 		})
 	}
@@ -140,6 +133,22 @@ class AddImage extends React.Component {
 	handleSubmit(event) {
 		event.preventDefault()
 		console.log('handleSubmit state: ', this.state)
+
+		// on bad input, display error message, leave input as is for correction
+		if (!this.state.sourceURL || !this.state.sourceURL.length) {
+			this.setState({ error: 'Image Source URL is required', success: null })
+			return
+		}
+
+		if (!this.state.dateCaptured || !this.state.dateCaptured.length) {
+			this.setState({ error: 'Date Captured is required', success: null })
+			return
+		}
+
+		if (!moment(this.state.dateCaptured, 'YYYY-MM-DD').isValid()) {
+			this.setState({ error: 'Date Captured must be provided in YYYY-MM-DD format', success: null })
+			return
+		}
 
 		const requestOptions = {
 			method: 'POST',
@@ -160,15 +169,27 @@ class AddImage extends React.Component {
 
 		fetch(`${apiBaseUrl}/addImage`, requestOptions)
 			.then(response => response.json())
-			.then(data => {
-				console.log('POST /addImage response data: ', data)
+			.then(allTagRecords => {
+				console.log('POST /addImage response allTags: ', allTagRecords)
 
-				// on successful response
-				// update existingTags in both state and localstorage with any new tags
-				// display success message
-				// clear the rest of state to allow new entry
+				const allTags = allTagRecords.map((tag) => ({
+					id: tag.tagID,
+					name: tag.tagText,
+				}))
 
-				// on error, display error message, leave state otherwise intact for correction
+				localStorage.setItem('existingTags', JSON.stringify(allTags))
+
+				// show success message, clear all inputs except those that are likely
+				// to remain the same for consecutive images (captureState/captureCountry/dateCaptured)
+				this.setState({
+					success: true,
+					error: null,
+					existingTags: allTags,
+					sourceURL: '',
+					sourceURL2: '',
+					name: '',
+					tags: [],
+				})
 			})
 	}
 
@@ -221,6 +242,7 @@ class AddImage extends React.Component {
 					<br/>
 					<input type="submit" value="Submit" onChange={this.handleSubmit} />
 					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
+					{this.state.success && <p>Success!</p>}
 				</form>
 			</div>
 		)
