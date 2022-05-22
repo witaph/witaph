@@ -18,6 +18,8 @@ class AddImage extends React.Component {
 			captureCountry: '',
 			tags: [],
 			existingTags: [],
+			error: null,
+			success: null,
 		}
 
 		this.handleSourceChange = this.handleSourceChange.bind(this)
@@ -50,8 +52,7 @@ class AddImage extends React.Component {
 				})
 			} else {
 				const tagsRes = await fetch(`${apiBaseUrl}/tags`)
-				const tagsResJson = await tagsRes.json()
-				const tagRecords = JSON.parse(tagsResJson.tags)
+				const tagRecords = await tagsRes.json()
 				console.log('fetched tagRecords: ', tagRecords)
 				const tags = tagRecords.map(tagRecord => ({
 					id: tagRecord.tagID,
@@ -66,34 +67,62 @@ class AddImage extends React.Component {
 	}
 
 	handleSourceChange(event) {
-		this.setState({ sourceURL: event.target.value })
+		this.setState({
+			sourceURL: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleSource2Change(event) {
-		this.setState({ sourceURL2: event.target.value })
+		this.setState({
+			sourceURL2: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleNameChange(event) {
-		this.setState({ name: event.target.value })
+		this.setState({
+			name: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleDateChange(event) {
-		this.setState({ dateCaptured: event.target.value })
+		this.setState({
+			dateCaptured: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleCaptureStateChange(event) {
-		this.setState({ captureState: event.target.value })
+		this.setState({
+			captureState: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleCountryChange(event) {
-		this.setState({ country: event.target.value })
+		this.setState({
+			captureCountry: event.target.value,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleTagAdd(tag) {
 		console.log('handleTagAdd, tag: ', tag)
 		const tags = [].concat(this.state.tags, tag)
 		console.log('current tags: ', tags)
-		this.setState({ tags })
+		this.setState({
+			tags,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleTagDelete(index) {
@@ -101,12 +130,46 @@ class AddImage extends React.Component {
 		const tags = this.state.tags.slice(0)
 		tags.splice(index, 1)
 		console.log('current tags: ', tags)
-		this.setState({ tags })
+		this.setState({
+			tags,
+			error: null,
+			success: null,
+		})
 	}
 
 	handleSubmit(event) {
 		event.preventDefault()
-		console.log('handleSubmit event: ', event)
+		console.log('handleSubmit state: ', this.state)
+
+		const requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': localStorage.getItem('token')
+			},
+			body: JSON.stringify({
+				sourceURL: this.state.sourceURL,
+				sourceURL2: this.state.sourceURL2,
+				name: this.state.name,
+				dateCaptured: this.state.dateCaptured,
+				captureState: this.state.captureState,
+				captureCountry: this.state.captureCountry,
+				tags: this.state.tags,
+			})
+		}
+
+		fetch(`${apiBaseUrl}/addImage`, requestOptions)
+			.then(response => response.json())
+			.then(data => {
+				console.log('POST /addImage response data: ', data)
+
+				// on successful response
+				// update existingTags in both state and localstorage with any new tags
+				// display success message
+				// clear the rest of state to allow new entry
+
+				// on error, display error message, leave state otherwise intact for correction
+			})
 	}
 
 	render() {
@@ -140,7 +203,7 @@ class AddImage extends React.Component {
 					<br/>
 					<label>
 						Country: 
-						<input type="text" value={this.state.country} onChange={this.handleCountryChange} />
+						<input type="text" value={this.state.captureCountry} onChange={this.handleCountryChange} />
 					</label>
 					<br/>
 					<label>
@@ -157,6 +220,7 @@ class AddImage extends React.Component {
 					</label>
 					<br/>
 					<input type="submit" value="Submit" onChange={this.handleSubmit} />
+					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
 				</form>
 			</div>
 		)

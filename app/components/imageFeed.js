@@ -9,6 +9,7 @@ import { apiBaseUrl } from '../constants'
 export default class ImageFeed extends React.Component {
     async componentDidMount() {
         const imagesRes = await fetch(`${apiBaseUrl}/images`)
+        console.log('imagesRes: ', imagesRes)
         const images = await imagesRes.json()
         console.log('images: ', images)
 
@@ -18,12 +19,12 @@ export default class ImageFeed extends React.Component {
 
         if (!localStorage.getItem('existingTags')) {
             const tagsRes = await fetch(`${apiBaseUrl}/tags`)
-            const tagsResJson = await tagsRes.json()
-            const tags = tagsResJson.tags
+            console.log('tagsRes: ', tagsRes)
+            const tags = await tagsRes.json()
             console.log('tags: ', tags)
 
             const tagsMapped = tags.map(tagRecord => ({
-                id: tagRecord.tagId,
+                id: tagRecord.tagID,
                 name: tagRecord.tagText
             }))
 
