@@ -7,7 +7,7 @@ import moment from 'moment'
 import { apiBaseUrl } from '../constants'
 import "./react-tags-styles.css"
 
-class AddImage extends React.Component {
+class UpdateImage extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -20,7 +20,6 @@ class AddImage extends React.Component {
 			tags: [],
 			existingTags: [],
 			error: null,
-			success: null,
 		}
 
 		this.handleSourceChange = this.handleSourceChange.bind(this)
@@ -37,6 +36,8 @@ class AddImage extends React.Component {
 	}
 
 	async componentDidMount() {
+		console.log('this.props.location: ', this.props.location)
+
 		const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
 			headers: { 'x-access-token': localStorage.getItem('token') }
 		})
@@ -45,6 +46,9 @@ class AddImage extends React.Component {
 		if (verifyRes.status != 200) {
 			this.props.navigate('../')
 		} else {
+			// const imageWithTags = await fetch(`${apiBaseUrl}/images/${parseInt(this.props.location.pathname, 10)}`)
+			// console.log('imageWithTags: ', imageWithTags)
+
 			const existingTags = JSON.parse(localStorage.getItem('existingTags'))
 			console.log('localStorage.getItem(existingTags): ', existingTags)
 			if (existingTags) {
@@ -70,42 +74,36 @@ class AddImage extends React.Component {
 	handleSourceChange(event) {
 		this.setState({
 			sourceURL: event.target.value,
-			success: null,
 		})
 	}
 
 	handleSource2Change(event) {
 		this.setState({
 			sourceURL2: event.target.value,
-			success: null,
 		})
 	}
 
 	handleNameChange(event) {
 		this.setState({
 			name: event.target.value,
-			success: null,
 		})
 	}
 
 	handleDateChange(event) {
 		this.setState({
 			dateCaptured: event.target.value,
-			success: null,
 		})
 	}
 
 	handleCaptureStateChange(event) {
 		this.setState({
 			captureState: event.target.value,
-			success: null,
 		})
 	}
 
 	handleCountryChange(event) {
 		this.setState({
 			captureCountry: event.target.value,
-			success: null,
 		})
 	}
 
@@ -115,7 +113,6 @@ class AddImage extends React.Component {
 		console.log('current tags: ', tags)
 		this.setState({
 			tags,
-			success: null,
 		})
 	}
 
@@ -126,7 +123,6 @@ class AddImage extends React.Component {
 		console.log('current tags: ', tags)
 		this.setState({
 			tags,
-			success: null,
 		})
 	}
 
@@ -136,17 +132,17 @@ class AddImage extends React.Component {
 
 		// on bad input, display error message, leave input as is for correction
 		if (!this.state.sourceURL || !this.state.sourceURL.length) {
-			this.setState({ error: 'Image Source URL is required', success: null })
+			this.setState({ error: 'Image Source URL is required' })
 			return
 		}
 
 		if (!this.state.dateCaptured || !this.state.dateCaptured.length) {
-			this.setState({ error: 'Date Captured is required', success: null })
+			this.setState({ error: 'Date Captured is required' })
 			return
 		}
 
 		if (!moment(this.state.dateCaptured, 'YYYY-MM-DD').isValid()) {
-			this.setState({ error: 'Date Captured must be provided in YYYY-MM-DD format', success: null })
+			this.setState({ error: 'Date Captured must be provided in YYYY-MM-DD format' })
 			return
 		}
 
@@ -167,10 +163,10 @@ class AddImage extends React.Component {
 			})
 		}
 
-		fetch(`${apiBaseUrl}/addImage`, requestOptions)
+		fetch(`${apiBaseUrl}/updateImage`, requestOptions)
 			.then(response => response.json())
 			.then(allTagRecords => {
-				console.log('POST /addImage response allTags: ', allTagRecords)
+				console.log('POST /updateImage response allTags: ', allTagRecords)
 
 				const allTags = allTagRecords.map((tag) => ({
 					id: tag.tagID,
@@ -179,17 +175,8 @@ class AddImage extends React.Component {
 
 				localStorage.setItem('existingTags', JSON.stringify(allTags))
 
-				// show success message, clear all inputs except those that are likely
-				// to remain the same for consecutive images (captureState/captureCountry/dateCaptured)
-				this.setState({
-					success: true,
-					error: null,
-					existingTags: allTags,
-					sourceURL: '',
-					sourceURL2: '',
-					name: '',
-					tags: [],
-				})
+				// redirect to image feed, ideally scrolled to image just edited
+				this.props.navigate('../')
 			})
 	}
 
@@ -240,18 +227,34 @@ class AddImage extends React.Component {
 						/>
 					</label>
 					<br/>
-					<input type="submit" value="Add Image" onChange={this.handleSubmit} />
+					<input type="submit" value="Update Image" onChange={this.handleSubmit} />
 					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
-					{this.state.success && <p>Success!</p>}
 				</form>
 			</div>
 		)
 	}
 }
 
+// const withRouterAndNavigate = (Component) => {
+//     const Wrapper = (props) => {
+//         const history = useHistory()
+//         const navigate = useNavigate()
+// 
+//         return (
+//             <Component
+//                 history={history}
+//                 navigate={navigate}
+//                 {...props}
+//                 />
+//         )
+//     }
+// 
+//     return Wrapper
+// }
+
 const WithNavigate = (props) => {
 	let navigate = useNavigate()
-	return <AddImage {...props} navigate={navigate} />
+	return <UpdateImage {...props} navigate={navigate} />
 }
 
-export default WithNavigate
+export default withRouterAndNavigate(UpdateImage)
