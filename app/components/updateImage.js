@@ -11,6 +11,7 @@ class UpdateImage extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+			imageID: null,
 			sourceURL: '',
 			sourceURL2: '',
 			name: '',
@@ -36,7 +37,10 @@ class UpdateImage extends React.Component {
 	}
 
 	async componentDidMount() {
-		console.log('this.props.location: ', this.props.location)
+		const pathnameSplit = window.location.pathname.split('/')
+		console.log('pathnameSplit: ', pathnameSplit)
+		const imageID = parseInt(pathnameSplit.slice(-1), 10)
+		console.log('imageID: ', imageID)
 
 		const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
 			headers: { 'x-access-token': localStorage.getItem('token') }
@@ -46,13 +50,29 @@ class UpdateImage extends React.Component {
 		if (verifyRes.status != 200) {
 			this.props.navigate('../')
 		} else {
-			// const imageWithTags = await fetch(`${apiBaseUrl}/images/${parseInt(this.props.location.pathname, 10)}`)
-			// console.log('imageWithTags: ', imageWithTags)
+			const imageWithTags = await fetch(`${apiBaseUrl}/images/${imageID}`)
+			console.log('imageWithTags: ', imageWithTags)
+			const imageWithTagsJson = await imageWithTags.json()
+			console.log('imageWithTagsJson: ', imageWithTagsJson)
+
+			const initialState = {
+				imageID: imageWithTagsJson.imageID,
+				sourceURL: imageWithTagsJson.sourceURL,
+				sourceURL2: imageWithTagsJson.sourceURL2 || '',
+				name: imageWithTagsJson.name || '',
+				dateCaptured: moment(imageWithTagsJson.dateCaptured, 'YYYY-MM-DD').format('YYYY-MM-DD'),
+				captureState: imageWithTagsJson.state || '',
+				captureCountry: imageWithTagsJson.country || '',
+				tags: imageWithTagsJson.tags || [],
+			}
+
+			console.log('initialState: ', initialState)
 
 			const existingTags = JSON.parse(localStorage.getItem('existingTags'))
 			console.log('localStorage.getItem(existingTags): ', existingTags)
 			if (existingTags) {
 				this.setState({
+					...initialState,
 					existingTags,
 				})
 			} else {
@@ -65,6 +85,7 @@ class UpdateImage extends React.Component {
 				}))
 				localStorage.setItem('existingTags', JSON.stringify(tags))
 				this.setState({
+					...initialState,
 					existingTags: tags,
 				})
 			}
@@ -235,26 +256,9 @@ class UpdateImage extends React.Component {
 	}
 }
 
-// const withRouterAndNavigate = (Component) => {
-//     const Wrapper = (props) => {
-//         const history = useHistory()
-//         const navigate = useNavigate()
-// 
-//         return (
-//             <Component
-//                 history={history}
-//                 navigate={navigate}
-//                 {...props}
-//                 />
-//         )
-//     }
-// 
-//     return Wrapper
-// }
-
 const WithNavigate = (props) => {
 	let navigate = useNavigate()
 	return <UpdateImage {...props} navigate={navigate} />
 }
 
-export default withRouterAndNavigate(UpdateImage)
+export default WithNavigate
