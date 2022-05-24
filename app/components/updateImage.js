@@ -174,6 +174,7 @@ class UpdateImage extends React.Component {
 				'x-access-token': localStorage.getItem('token')
 			},
 			body: JSON.stringify({
+				imageID: this.state.imageID,
 				sourceURL: this.state.sourceURL,
 				sourceURL2: this.state.sourceURL2,
 				name: this.state.name,
@@ -196,7 +197,7 @@ class UpdateImage extends React.Component {
 
 				localStorage.setItem('existingTags', JSON.stringify(allTags))
 
-				// redirect to image feed, ideally scrolled to image just edited
+				// redirect to image feed on success, ideally scrolled to this image
 				this.props.navigate('../')
 			})
 	}
