@@ -13,9 +13,19 @@ export default class ImageFeed extends React.Component {
         const images = await imagesRes.json()
         console.log('images: ', images)
 
-        this.setState({
+        const initialState = {
             images,
+        }
+
+        const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
+            headers: { 'x-access-token': localStorage.getItem('token') }
         })
+        console.log('verifyLogin response: ', verifyRes)
+        if (verifyRes.status == 200) {
+            initialState.isVerified = true
+        }
+
+        this.setState(initialState)
 
         if (!localStorage.getItem('existingTags')) {
             const tagsRes = await fetch(`${apiBaseUrl}/tags`)
@@ -40,6 +50,7 @@ export default class ImageFeed extends React.Component {
                     name={imageData.name}
                     tags={imageData.tags}
                     idx={imageData.imageID}
+                    isVerified={this.state.isVerified}
                 />)}
                 {content.map(imageData => <Image
                     src={imageData.src}

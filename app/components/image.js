@@ -1,7 +1,14 @@
 import React from 'react';
 import '../index.css';
+import { useNavigate } from 'react-router-dom'
 
-export default class Image extends React.Component {
+class Image extends React.Component {
+	constructor(props) {
+		super(props)
+
+		this.goToUpdatePage = this.goToUpdatePage.bind(this)
+	}
+
 	componentDidMount() {
 		this.observer = new IntersectionObserver(entries => {
 			// console.log('entries: ', entries)
@@ -34,11 +41,22 @@ export default class Image extends React.Component {
 		)
 	}
 
+	goToUpdatePage() {
+		this.props.navigate(`/images/${this.props.idx}`)
+	}
+
 	render() {
 		return (
 			<div id={'imgWrapper' + this.props.idx} style={{minHeight: '400px'}}>
-				<img ref={el => this.element = el} style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}}/>
+				<img ref={el => this.element = el} style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}} onClick={this.props.isVerified && this.goToUpdatePage}/>
 			</div>
 		)
 	}
 }
+
+const WithNavigate = (props) => {
+	let navigate = useNavigate()
+	return <Image {...props} navigate={navigate} />
+}
+
+export default WithNavigate
