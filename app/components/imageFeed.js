@@ -3,10 +3,28 @@ import ReactDOM from 'react-dom'
 
 import '../index.css'
 import Image from './image'
+import ImageFilters from './imageFilters'
 import { content } from '../content'
 import { apiBaseUrl } from '../constants'
 
 export default class ImageFeed extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            images: [],
+            isVerified: false,
+            sidebarOpen: false,
+        }
+
+        this.handleToggleSidebar = this.handleToggleSidebar.bind(this)
+    }
+
+    handleToggleSidebar () {
+        this.setState({
+            sidebarOpen: !this.state.sidebarOpen,
+        })
+    }
+
     async componentDidMount() {
         const imagesRes = await fetch(`${apiBaseUrl}/images`)
         console.log('imagesRes: ', imagesRes)
@@ -44,20 +62,26 @@ export default class ImageFeed extends React.Component {
 
     render() {
         return (
-            <div id='container'>
-                {this.state && this.state.images && this.state.images.map(imageData => <Image
-                    src={imageData.sourceURL}
-                    name={imageData.name}
-                    tags={imageData.tags}
-                    idx={imageData.imageID}
-                    isVerified={this.state.isVerified}
-                />)}
-                {content.map(imageData => <Image
-                    src={imageData.src}
-                    name={imageData.name}
-                    tags={imageData.tags}
-                    idx={imageData.idx}
-                />)}
+            <div>
+                <ImageFilters
+                    isOpen={this.state.sidebarOpen}
+                    toggleSidebar={this.handleToggleSidebar}
+                />
+                <div className={this.state.sidebarOpen ? 'content open' : 'content'} id='container'>
+                    {this.state && this.state.images && this.state.images.map(imageData => <Image
+                        src={imageData.sourceURL}
+                        name={imageData.name}
+                        tags={imageData.tags}
+                        idx={imageData.imageID}
+                        isVerified={this.state.isVerified}
+                    />)}
+                    {content.map(imageData => <Image
+                        src={imageData.src}
+                        name={imageData.name}
+                        tags={imageData.tags}
+                        idx={imageData.idx}
+                    />)}
+                </div>
             </div>
         )
     }

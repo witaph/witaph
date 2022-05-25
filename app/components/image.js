@@ -48,7 +48,7 @@ class Image extends React.Component {
 	render() {
 		return (
 			<div id={'imgWrapper' + this.props.idx} style={{minHeight: '400px'}}>
-				<img ref={el => this.element = el} style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}} onClick={this.props.isVerified && this.goToUpdatePage}/>
+				<img ref={el => this.element = el} style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}} onClick={this.props.isVerified ? this.goToUpdatePage : undefined}/>
 			</div>
 		)
 	}

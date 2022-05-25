@@ -6,3 +6,44 @@ img {
 	width: auto;
 	height: 100%;
 }
+
+.sidebar {
+	position: fixed;
+	left: -200px;
+	height: 100%;
+	width: 200px;
+	transition: left 0.3s ease-in-out;
+	background-color: white;
+	z-index: 50;
+}
+
+.sidebar-toggle {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	height: 24px;
+	width: 24px;
+	z-index: 100;
+}
+
+.content {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	transition: left 0.3s ease-in-out;
+	background-color: white;
+}
+
+.sidebar.open {
+	left: 0;
+}
+
+.content.open {
+	left: 200px;
+}
+
+.sidebar-toggle.open {
+	left: 200px;
+}
