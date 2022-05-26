@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import '../index.css'
 import Image from './image'
 import ImageFilters from './imageFilters'
-import { content } from '../content'
 import { apiBaseUrl } from '../constants'
 
 export default class ImageFeed extends React.Component {
@@ -104,12 +103,6 @@ export default class ImageFeed extends React.Component {
                         tags={imageData.tags}
                         idx={imageData.imageID}
                         isVerified={this.state.isVerified}
-                    />)}
-                    {content.map(imageData => <Image
-                        src={imageData.src}
-                        name={imageData.name}
-                        tags={imageData.tags}
-                        idx={imageData.idx}
                     />)}
                 </div>
             </div>

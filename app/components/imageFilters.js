@@ -14,6 +14,7 @@ export default class ImageFilters extends React.Component {
 			whichTags: 'all',
 			existingTags: [],
 			error: null,
+			mostRecentAddtime: moment()
 		}
 
 		this.handleCapturedAfterChange = this.handleCapturedAfterChange.bind(this)
@@ -59,17 +60,21 @@ export default class ImageFilters extends React.Component {
 		console.log('current tags: ', tags)
 		this.setState({
 			tags,
+			mostRecentAddTime: moment()
 		})
 	}
 
 	handleTagDelete(index) {
 		console.log('handleTagDelete, index: ', index)
-		const tags = this.state.tags.slice(0)
-		tags.splice(index, 1)
-		console.log('current tags: ', tags)
-		this.setState({
-			tags,
-		})
+		console.log('this.state.mostRecentAddTime: ', moment(this.state.mostRecentAddTime).format())
+		if (moment().diff(this.state.mostRecentAddTime, 'seconds') > 1) {
+			const tags = this.state.tags.slice(0)
+			tags.splice(index, 1)
+			console.log('current tags: ', tags)
+			this.setState({
+				tags,
+			})
+		}
 	}
 
 	handleWhichTagsChange(event) {
