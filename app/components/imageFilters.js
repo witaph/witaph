@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactTags from 'react-tag-autocomplete'
+import moment from 'moment'
 
 export default class ImageFilters extends React.Component {
 	constructor(props) {
@@ -12,6 +13,7 @@ export default class ImageFilters extends React.Component {
 			tags: [],
 			whichTags: 'all',
 			existingTags: [],
+			error: null,
 		}
 
 		this.handleCapturedAfterChange = this.handleCapturedAfterChange.bind(this)
@@ -80,7 +82,23 @@ export default class ImageFilters extends React.Component {
 		event.preventDefault()
 		console.log('submitFilters, this.state: ', this.state)
 
-		// this.props.filterImages(this.state)
+		if (this.state.capturedAfter && this.state.capturedAfter.length
+			&& !moment(this.state.capturedAfter, 'YYYY-MM-DD').isValid()) {
+			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
+			return
+		}
+
+		if (this.state.capturedBefore && this.state.capturedBefore.length
+			&& !moment(this.state.capturedBefore, 'YYYY-MM-DD').isValid()) {
+			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
+			return
+		}
+
+		this.setState({
+			error: null
+		})
+
+		this.props.filterImages(this.state)
 	}
 
 	render() {
@@ -132,6 +150,8 @@ export default class ImageFilters extends React.Component {
 					<br/>
 					<br/>
 					<input type="submit" value="Apply Filters" onChange={this.submitFilters} />
+					<br/>
+					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
 				</form>
 
 				<button onClick={this.props.toggleSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'}>

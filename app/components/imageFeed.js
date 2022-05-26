@@ -17,6 +17,7 @@ export default class ImageFeed extends React.Component {
         }
 
         this.handleToggleSidebar = this.handleToggleSidebar.bind(this)
+        this.filterImages = this.filterImages.bind(this)
     }
 
     handleToggleSidebar () {
@@ -26,7 +27,15 @@ export default class ImageFeed extends React.Component {
     }
 
     async componentDidMount() {
-        const imagesRes = await fetch(`${apiBaseUrl}/images`)
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: '{}',
+        }
+
+        const imagesRes = await fetch(`${apiBaseUrl}/images`, requestOptions)
         console.log('imagesRes: ', imagesRes)
         const images = await imagesRes.json()
         console.log('images: ', images)
@@ -60,12 +69,33 @@ export default class ImageFeed extends React.Component {
         }
     }
 
+    async filterImages(filters) {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(filters),
+        }
+
+        console.log('filterImages, filters: ', filters)
+        const imagesRes = await fetch(`${apiBaseUrl}/images`, requestOptions)
+        console.log('imagesRes: ', imagesRes)
+        const images = await imagesRes.json()
+        console.log('images: ', images)
+
+        this.setState({
+            images,
+        })
+    }
+
     render() {
         return (
             <div>
                 <ImageFilters
                     isOpen={this.state.sidebarOpen}
                     toggleSidebar={this.handleToggleSidebar}
+                    filterImages={this.filterImages}
                 />
                 <div className={this.state.sidebarOpen ? 'content open' : 'content'} id='container'>
                     {this.state && this.state.images && this.state.images.map(imageData => <Image
