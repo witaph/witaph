@@ -9,13 +9,15 @@ img {
 
 .sidebar {
 	position: fixed;
-	left: -200px;
+	left: -205px;
+	top: 0px;
 	height: 100%;
 	width: 200px;
 	transition: left 0.3s ease-in-out;
 	background-color: white;
 	z-index: 50;
 	padding-left: 5px;
+	padding-top: 5px;
 }
 
 .sidebar-toggle {

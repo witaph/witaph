@@ -201,11 +201,11 @@ export default class ImageFilters extends React.Component {
 					<br/>
 					<br/>
 					<input type="submit" value="Apply Filters" onChange={this.submitFilters} />
-					<br/>
-					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
-					<img src={infoIcon} onClick={this.toggleInfo} className={this.props.isOpen ? 'info-icon open' : 'info-icon'} />
-					{this.state.showInfo && <p>All fields are optional. Dates expected in YYYY-MM-DD format, State/Province in shorthand format (CA, UT, AZ, etc) </p>}
 				</form>
+				<br/>
+				{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
+				<img src={infoIcon} onClick={this.toggleInfo} className={this.props.isOpen ? 'info-icon open' : 'info-icon'} />
+				{this.state.showInfo && <p>All fields are optional. Dates expected in YYYY-MM-DD format, State/Province in shorthand format (CA, UT, AZ, etc) </p>}
 
 				<img src={hamburgerIcon} onClick={this.props.openSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'} />
 			</div>
