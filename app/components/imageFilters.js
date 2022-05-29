@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
 import hamburgerIcon from '../img/Hamburger_icon.png'
+import infoIcon from '../img/info_icon.png'
 
 export default class ImageFilters extends React.Component {
 	constructor(props) {
@@ -17,7 +18,8 @@ export default class ImageFilters extends React.Component {
 			whichTags: 'all',
 			existingTags: [],
 			error: null,
-			mostRecentAddtime: moment()
+			mostRecentAddtime: moment(),
+			showInfo: false,
 		}
 
 		this.handleCapturedAfterChange = this.handleCapturedAfterChange.bind(this)
@@ -26,6 +28,7 @@ export default class ImageFilters extends React.Component {
 		this.handleTagDelete = this.handleTagDelete.bind(this)
 		this.handleTagAdd = this.handleTagAdd.bind(this)
 		this.handleWhichTagsChange = this.handleWhichTagsChange.bind(this)
+		this.toggleInfo = this.toggleInfo.bind(this)
 		this.submitFilters = this.submitFilters.bind(this)
 
 		this.reactTags = React.createRef()
@@ -104,6 +107,12 @@ export default class ImageFilters extends React.Component {
 		})
 	}
 
+	toggleInfo() {
+		this.setState({
+			showInfo: !this.state.showInfo,
+		})
+	}
+
 	submitFilters(event) {
 		event.preventDefault()
 		console.log('submitFilters, this.state: ', this.state)
@@ -178,6 +187,8 @@ export default class ImageFilters extends React.Component {
 					<input type="submit" value="Apply Filters" onChange={this.submitFilters} />
 					<br/>
 					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
+					<img src={infoIcon} onClick={this.toggleInfo} className={this.props.isOpen ? 'info-icon open' : 'info-icon'} />
+					{this.state.showInfo && <p>All fields are optional. Dates expected in YYYY-MM-DD format, State/Province in shorthand format (CA, UT, AZ, etc) </p>}
 				</form>
 
 				<img src={hamburgerIcon} onClick={this.props.openSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'} />
