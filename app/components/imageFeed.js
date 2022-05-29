@@ -15,13 +15,20 @@ export default class ImageFeed extends React.Component {
             sidebarOpen: false,
         }
 
-        this.handleToggleSidebar = this.handleToggleSidebar.bind(this)
+        this.openSidebar = this.openSidebar.bind(this)
+        this.closeSidebar = this.closeSidebar.bind(this)
         this.filterImages = this.filterImages.bind(this)
     }
 
-    handleToggleSidebar () {
+    openSidebar () {
         this.setState({
             sidebarOpen: !this.state.sidebarOpen,
+        })
+    }
+
+    closeSidebar () {
+        this.setState({
+            sidebarOpen: false,
         })
     }
 
@@ -79,10 +86,10 @@ export default class ImageFeed extends React.Component {
             <div>
                 <ImageFilters
                     isOpen={this.state.sidebarOpen}
-                    toggleSidebar={this.handleToggleSidebar}
+                    openSidebar={this.openSidebar}
                     filterImages={this.filterImages}
                 />
-                <div className={this.state.sidebarOpen ? 'content open' : 'content'} id='container'>
+                <div className={this.state.sidebarOpen ? 'content open' : 'content'} id='container' onClick={this.closeSidebar}>
                     {this.state && this.state.images && this.state.images.map(imageData => <Image
                         src={imageData.sourceURL}
                         name={imageData.name}

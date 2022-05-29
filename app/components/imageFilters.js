@@ -4,6 +4,7 @@ import ReactTags from 'react-tag-autocomplete'
 import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
+import hamburgerIcon from '../img/Hamburger_icon.png'
 
 export default class ImageFilters extends React.Component {
 	constructor(props) {
@@ -179,9 +180,7 @@ export default class ImageFilters extends React.Component {
 					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
 				</form>
 
-				<button onClick={this.props.toggleSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'}>
-					{this.props.isOpen ? '<<' : '>>'}
-				</button>
+				<img src={hamburgerIcon} onClick={this.props.openSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'} />
 			</div>
 		)
 	}

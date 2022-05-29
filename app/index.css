@@ -18,11 +18,14 @@ img {
 }
 
 .sidebar-toggle {
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.5s ease-in-out;
 	position: fixed;
 	left: 0px;
 	top: 0px;
-	height: 24px;
-	width: 24px;
+	height: 52px;
+	width: 52px;
 	z-index: 100;
 }
 
@@ -45,5 +48,6 @@ img {
 }
 
 .sidebar-toggle.open {
-	left: 200px;
+	visibility: hidden;
+	opacity: 0;
 }
