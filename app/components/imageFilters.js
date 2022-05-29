@@ -7,6 +7,27 @@ import { apiBaseUrl } from '../constants'
 import hamburgerIcon from '../img/Hamburger_icon.png'
 import infoIcon from '../img/info_icon.png'
 
+const tagSuggestionsTransform = (query, suggestions) => {
+	const escapedQuery = query.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')
+	const matchPartial = new RegExp(`(?:^|\\s)${escapedQuery}`, 'i')
+
+	const partialMatches = suggestions.filter(tag => matchPartial.test(tag.name))
+
+	const preferredTags = ['jade', 'ambulance', 'national park', 'wildlife']
+	const preferredSuggestions = []
+	const otherSuggestions = []
+
+	partialMatches.map(tag => {
+		if (preferredTags.includes(tag.name)) {
+			preferredSuggestions.push(tag)
+		} else {
+			otherSuggestions.push(tag)
+		}
+	})
+
+	return preferredSuggestions.concat(otherSuggestions)
+}
+
 export default class ImageFilters extends React.Component {
 	constructor(props) {
 		super(props)
@@ -168,6 +189,7 @@ export default class ImageFilters extends React.Component {
 							ref={this.reactTags}
 							tags={this.state.tags}
 							suggestions={this.state.existingTags}
+							suggestionsTransform={tagSuggestionsTransform}
 							onDelete={this.handleTagDelete}
 							onAddition={this.handleTagAdd}
 							allowNew={false}
