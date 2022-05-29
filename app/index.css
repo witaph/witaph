@@ -15,6 +15,7 @@ img {
 	transition: left 0.3s ease-in-out;
 	background-color: white;
 	z-index: 50;
+	padding-left: 5px;
 }
 
 .sidebar-toggle {

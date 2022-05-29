@@ -7,13 +7,14 @@ import { apiBaseUrl } from '../constants'
 import hamburgerIcon from '../img/Hamburger_icon.png'
 import infoIcon from '../img/info_icon.png'
 
+const preferredTags = ['jade', 'ambulance', 'national park', 'wildlife']
+
 const tagSuggestionsTransform = (query, suggestions) => {
 	const escapedQuery = query.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')
 	const matchPartial = new RegExp(`(?:^|\\s)${escapedQuery}`, 'i')
 
 	const partialMatches = suggestions.filter(tag => matchPartial.test(tag.name))
 
-	const preferredTags = ['jade', 'ambulance', 'national park', 'wildlife']
 	const preferredSuggestions = []
 	const otherSuggestions = []
 
