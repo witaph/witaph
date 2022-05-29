@@ -38,8 +38,6 @@ class Login extends React.Component {
 		fetch(`${apiBaseUrl}/login`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
-				console.log('POST /login response data: ', data)
-
 				if(data.accessToken) {
 					// save JWT and redirect to admin page
 					localStorage.setItem('token', data.accessToken)

@@ -40,13 +40,12 @@ class AddImage extends React.Component {
 		const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
 			headers: { 'x-access-token': localStorage.getItem('token') }
 		})
-		console.log('verifyLogin response: ', verifyRes)
 
 		if (verifyRes.status != 200) {
 			this.props.navigate('../')
 		} else {
 			const existingTags = JSON.parse(localStorage.getItem('existingTags'))
-			console.log('localStorage.getItem(existingTags): ', existingTags)
+
 			if (existingTags) {
 				this.setState({
 					existingTags,
@@ -54,7 +53,7 @@ class AddImage extends React.Component {
 			} else {
 				const tagsRes = await fetch(`${apiBaseUrl}/tags`)
 				const tagRecords = await tagsRes.json()
-				console.log('fetched tagRecords: ', tagRecords)
+				
 				const tags = tagRecords.map(tagRecord => ({
 					id: tagRecord.tagID,
 					name: tagRecord.tagText,
@@ -110,9 +109,7 @@ class AddImage extends React.Component {
 	}
 
 	handleTagAdd(tag) {
-		console.log('handleTagAdd, tag: ', tag)
 		const tags = [].concat(this.state.tags, tag)
-		console.log('current tags: ', tags)
 		this.setState({
 			tags,
 			success: null,
@@ -120,10 +117,9 @@ class AddImage extends React.Component {
 	}
 
 	handleTagDelete(index) {
-		console.log('handleTagDelete, index: ', index)
 		const tags = this.state.tags.slice(0)
 		tags.splice(index, 1)
-		console.log('current tags: ', tags)
+		
 		this.setState({
 			tags,
 			success: null,
@@ -132,7 +128,6 @@ class AddImage extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault()
-		console.log('handleSubmit state: ', this.state)
 
 		// on bad input, display error message, leave input as is for correction
 		if (!this.state.sourceURL || !this.state.sourceURL.length) {
@@ -170,8 +165,6 @@ class AddImage extends React.Component {
 		fetch(`${apiBaseUrl}/addImage`, requestOptions)
 			.then(response => response.json())
 			.then(allTagRecords => {
-				console.log('POST /addImage response allTags: ', allTagRecords)
-
 				const allTags = allTagRecords.map((tag) => ({
 					id: tag.tagID,
 					name: tag.tagText,

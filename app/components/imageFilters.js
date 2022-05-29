@@ -58,13 +58,10 @@ export default class ImageFilters extends React.Component {
 
 	async componentDidMount() {
 		const existingTags = JSON.parse(localStorage.getItem('existingTags'))
-		console.log('ImageFilters localStorage.getItem(existingTags): ', existingTags)
 
 		if (!existingTags) {
             const tagsRes = await fetch(`${apiBaseUrl}/tags`)
-            console.log('tagsRes: ', tagsRes)
             const tags = await tagsRes.json()
-            console.log('tags: ', tags)
 
             const tagsMapped = tags.map(tagRecord => ({
                 id: tagRecord.tagID,
@@ -101,9 +98,7 @@ export default class ImageFilters extends React.Component {
 	}
 
 	handleTagAdd(tag) {
-		console.log('handleTagAdd, tag: ', tag)
 		const tags = [].concat(this.state.tags, tag)
-		console.log('current tags: ', tags)
 		this.setState({
 			tags,
 			mostRecentAddTime: moment()
@@ -111,12 +106,11 @@ export default class ImageFilters extends React.Component {
 	}
 
 	handleTagDelete(index) {
-		console.log('handleTagDelete, index: ', index)
-		console.log('this.state.mostRecentAddTime: ', moment(this.state.mostRecentAddTime).format())
+		// prevent erroneous deletes triggered by the same click as an add
 		if (moment().diff(this.state.mostRecentAddTime, 'seconds') > 1) {
 			const tags = this.state.tags.slice(0)
 			tags.splice(index, 1)
-			console.log('current tags: ', tags)
+
 			this.setState({
 				tags,
 			})
@@ -137,7 +131,6 @@ export default class ImageFilters extends React.Component {
 
 	submitFilters(event) {
 		event.preventDefault()
-		console.log('submitFilters, this.state: ', this.state)
 
 		if (this.state.capturedAfter && this.state.capturedAfter.length
 			&& !moment(this.state.capturedAfter, 'YYYY-MM-DD').isValid()) {

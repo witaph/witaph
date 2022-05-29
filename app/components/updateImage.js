@@ -37,23 +37,20 @@ class UpdateImage extends React.Component {
 	}
 
 	async componentDidMount() {
+		// get imageID url param manually from the end of window.location as following
+		// react-router's documentation has not yielded results
 		const pathnameSplit = window.location.pathname.split('/')
-		console.log('pathnameSplit: ', pathnameSplit)
 		const imageID = parseInt(pathnameSplit.slice(-1), 10)
-		console.log('imageID: ', imageID)
 
 		const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
 			headers: { 'x-access-token': localStorage.getItem('token') }
 		})
-		console.log('verifyLogin response: ', verifyRes)
 
 		if (verifyRes.status != 200) {
 			this.props.navigate('../')
 		} else {
 			const imageWithTags = await fetch(`${apiBaseUrl}/images/${imageID}`)
-			console.log('imageWithTags: ', imageWithTags)
 			const imageWithTagsJson = await imageWithTags.json()
-			console.log('imageWithTagsJson: ', imageWithTagsJson)
 
 			const initialState = {
 				imageID: imageWithTagsJson.imageID,
@@ -66,10 +63,8 @@ class UpdateImage extends React.Component {
 				tags: imageWithTagsJson.tags || [],
 			}
 
-			console.log('initialState: ', initialState)
-
 			const existingTags = JSON.parse(localStorage.getItem('existingTags'))
-			console.log('localStorage.getItem(existingTags): ', existingTags)
+			
 			if (existingTags) {
 				this.setState({
 					...initialState,
@@ -78,7 +73,7 @@ class UpdateImage extends React.Component {
 			} else {
 				const tagsRes = await fetch(`${apiBaseUrl}/tags`)
 				const tagRecords = await tagsRes.json()
-				console.log('fetched tagRecords: ', tagRecords)
+				
 				const tags = tagRecords.map(tagRecord => ({
 					id: tagRecord.tagID,
 					name: tagRecord.tagText,
@@ -129,19 +124,17 @@ class UpdateImage extends React.Component {
 	}
 
 	handleTagAdd(tag) {
-		console.log('handleTagAdd, tag: ', tag)
 		const tags = [].concat(this.state.tags, tag)
-		console.log('current tags: ', tags)
+		
 		this.setState({
 			tags,
 		})
 	}
 
 	handleTagDelete(index) {
-		console.log('handleTagDelete, index: ', index)
 		const tags = this.state.tags.slice(0)
 		tags.splice(index, 1)
-		console.log('current tags: ', tags)
+
 		this.setState({
 			tags,
 		})
@@ -149,7 +142,6 @@ class UpdateImage extends React.Component {
 
 	handleSubmit(event) {
 		event.preventDefault()
-		console.log('handleSubmit state: ', this.state)
 
 		// on bad input, display error message, leave input as is for correction
 		if (!this.state.sourceURL || !this.state.sourceURL.length) {
@@ -188,8 +180,6 @@ class UpdateImage extends React.Component {
 		fetch(`${apiBaseUrl}/updateImage`, requestOptions)
 			.then(response => response.json())
 			.then(allTagRecords => {
-				console.log('POST /updateImage response allTags: ', allTagRecords)
-
 				const allTags = allTagRecords.map((tag) => ({
 					id: tag.tagID,
 					name: tag.tagText,
