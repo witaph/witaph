@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import ReactTags from 'react-tag-autocomplete'
 import moment from 'moment'
 
+import { apiBaseUrl } from '../constants'
+
 export default class ImageFilters extends React.Component {
 	constructor(props) {
 		super(props)
@@ -31,6 +33,24 @@ export default class ImageFilters extends React.Component {
 	async componentDidMount() {
 		const existingTags = JSON.parse(localStorage.getItem('existingTags'))
 		console.log('ImageFilters localStorage.getItem(existingTags): ', existingTags)
+
+		if (!existingTags) {
+            const tagsRes = await fetch(`${apiBaseUrl}/tags`)
+            console.log('tagsRes: ', tagsRes)
+            const tags = await tagsRes.json()
+            console.log('tags: ', tags)
+
+            const tagsMapped = tags.map(tagRecord => ({
+                id: tagRecord.tagID,
+                name: tagRecord.tagText
+            }))
+
+            localStorage.setItem('existingTags', JSON.stringify(tagsMapped))
+            return this.setState({
+            	existingTags: tagsMapped,
+            })
+        }
+
 		this.setState({
 			existingTags,
 		})

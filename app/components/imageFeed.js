@@ -52,20 +52,6 @@ export default class ImageFeed extends React.Component {
         }
 
         this.setState(initialState)
-
-        if (!localStorage.getItem('existingTags')) {
-            const tagsRes = await fetch(`${apiBaseUrl}/tags`)
-            console.log('tagsRes: ', tagsRes)
-            const tags = await tagsRes.json()
-            console.log('tags: ', tags)
-
-            const tagsMapped = tags.map(tagRecord => ({
-                id: tagRecord.tagID,
-                name: tagRecord.tagText
-            }))
-
-            localStorage.setItem('existingTags', JSON.stringify(tagsMapped))
-        }
     }
 
     async filterImages(filters) {
