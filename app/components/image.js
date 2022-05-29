@@ -22,8 +22,8 @@ class Image extends React.Component {
 				}
 			})
 		}, {
-			root: null,
-			threshold: 0.1,
+			rootMargin: '-100px 0px',
+			threshold: 0.01,
 		})
 
 		this.observer.observe(document.querySelector("#imgWrapper" + this.props.idx))
