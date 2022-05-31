@@ -14,7 +14,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadBefore) {
         let count = 0
         let index = startIndex - 1
-        while (index >= 0 && count < 5) {
+        while (index >= 0 && count < 10) {
             images[index].isLoaded = true
             count++
             index--
@@ -24,7 +24,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadAfter) {
         let count = 0
         let index = startIndex + 1
-        while (index < images.length && count < 5) {
+        while (index < images.length && count < 10) {
             images[index].isLoaded = true
             count++
             index++
@@ -118,18 +118,16 @@ export default class ImageFeed extends React.Component {
             return
         }
 
-        // when scroll position increases by at least 2, load next images
-        if (imagesIndex > this.state.scrollPosition + 1) {
-            console.log('updateScrollPosition scrolled down, imagesIndex: ', imagesIndex)
+        // when scroll position increases by at least 5, load next images
+        if (imagesIndex > this.state.scrollPosition + 4) {
             this.setState({
                 images: setIsLoaded(this.state.images, imagesIndex, false, true),
                 scrollPosition: imagesIndex,
             })
         }
 
-        // when scroll position decreases by at least 2, load previous images
-        if (imagesIndex < this.state.scrollPosition - 1) {
-            console.log('updateScrollPosition scrolled up, imagesIndex: ', imagesIndex)
+        // when scroll position decreases by at least 5, load previous images
+        if (imagesIndex < this.state.scrollPosition - 4) {
             this.setState({
                 images: setIsLoaded(this.state.images, imagesIndex, true, false),
                 scrollPosition: imagesIndex,
