@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom'
 class Image extends React.Component {
 	constructor(props) {
 		super(props)
+		this.state = {
+			loadedSource: null,
+		}
 
 		this.goToUpdatePage = this.goToUpdatePage.bind(this)
 	}
@@ -12,6 +15,7 @@ class Image extends React.Component {
 	componentDidMount() {
 		if (this.props.isLoaded) {
 			this.element.src = this.props.src
+			this.setState({ loadedSource: this.props.src })
 		}
 
 		this.observer = new IntersectionObserver(entries => {
@@ -33,10 +37,11 @@ class Image extends React.Component {
 		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate() {
 		if (this.props.isLoaded) {
-			if (!this.element.src || this.props.src != prevProps.src) {
+			if (!this.element.src || this.props.src != this.state.loadedSource) {
 				this.element.src = this.props.src
+				this.setState({ loadedSource: this.props.src })
 			}
 		}
 
