@@ -33,9 +33,11 @@ class Image extends React.Component {
 		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps) {
 		if (this.props.isLoaded) {
-			this.element.src = this.props.src
+			if (!this.element.src || this.props.src != prevProps.src) {
+				this.element.src = this.props.src
+			}
 		}
 
 		this.observer = new IntersectionObserver(entries => {
