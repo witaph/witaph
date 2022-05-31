@@ -10,32 +10,16 @@ class Image extends React.Component {
 	}
 
 	componentDidMount() {
+		if (this.props.isLoaded) {
+			this.element.src = this.props.src
+		}
+
 		this.observer = new IntersectionObserver(entries => {
 			entries.forEach(entry => {
 				const { isIntersecting, intersectionRatio } = entry
 
 				if (isIntersecting) {
-					this.element.src = this.props.src
-					if (this.observer) {
-						this.observer = this.observer.disconnect()
-					}
-				}
-			})
-		}, {
-			rootMargin: '-100px 0px',
-			threshold: 0.01,
-		})
-
-		this.observer.observe(document.querySelector("#imgWrapper" + this.props.idx))
-	}
-
-	componentDidUpdate() {
-		this.observer = new IntersectionObserver(entries => {
-			entries.forEach(entry => {
-				const { isIntersecting, intersectionRatio } = entry
-
-				if (isIntersecting) {
-					this.element.src = this.props.src
+					this.props.updateScrollPosition(this.props.idx)
 					if (this.observer) {
 						this.observer = this.observer.disconnect()
 					}
@@ -43,19 +27,43 @@ class Image extends React.Component {
 			})
 		}, {
 			root: null,
-			threshold: 0.1,
+			threshold: 0.01,
 		})
 
-		this.observer.observe(document.querySelector("#imgWrapper" + this.props.idx))
+		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
+	}
+
+	componentDidUpdate() {
+		if (this.props.isLoaded) {
+			this.element.src = this.props.src
+		}
+
+		this.observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				const { isIntersecting, intersectionRatio } = entry
+
+				if (isIntersecting) {
+					this.props.updateScrollPosition(this.props.idx)
+					if (this.observer) {
+						this.observer = this.observer.disconnect()
+					}
+				}
+			})
+		}, {
+			root: null,
+			threshold: 0.01,
+		})
+
+		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
 	goToUpdatePage() {
-		this.props.navigate(`/images/${this.props.idx}`)
+		this.props.navigate(`/images/${this.props.imageID}`)
 	}
 
 	render() {
 		return (
-			<div id={'imgWrapper' + this.props.idx} style={{minHeight: '400px'}}>
+			<div id={'imgWrapper' + this.props.imageID} style={{minHeight: '400px'}}>
 				<img ref={el => this.element = el} style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}} onClick={this.props.isVerified ? this.goToUpdatePage : undefined}/>
 			</div>
 		)
