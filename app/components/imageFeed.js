@@ -155,6 +155,7 @@ export default class ImageFeed extends React.Component {
                         isLoaded={imageData.isLoaded}
                         isVerified={this.state.isVerified}
                         updateScrollPosition={this.updateScrollPosition}
+                        key={imagesIndex}
                     />)}
                 </div>
             </div>
