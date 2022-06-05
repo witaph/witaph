@@ -6,6 +6,8 @@ import Image from './image'
 import ImageFilters from './imageFilters'
 import { apiBaseUrl } from '../constants'
 
+const countToPreload = 10
+
 const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     const images = [...imagesPreload]
     
@@ -14,7 +16,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadBefore) {
         let count = 0
         let index = startIndex - 1
-        while (index >= 0 && count < 10) {
+        while (index >= 0 && count < countToPreload) {
             images[index].isLoaded = true
             count++
             index--
@@ -24,7 +26,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadAfter) {
         let count = 0
         let index = startIndex + 1
-        while (index < images.length && count < 10) {
+        while (index < images.length && count < countToPreload) {
             images[index].isLoaded = true
             count++
             index++
@@ -100,10 +102,9 @@ export default class ImageFeed extends React.Component {
 
         const imagesRes = await fetch(`${apiBaseUrl}/images`, requestOptions)
         const images = await imagesRes.json()
-        console.log('filterImages, images: ', images)
 
         const scrollPosition = this.state.scrollPosition >= images.length
-            ? images.length - 1
+            ? Math.max(images.length - 1, 0)
             : this.state.scrollPosition
 
         this.setState({
@@ -118,16 +119,17 @@ export default class ImageFeed extends React.Component {
             return
         }
 
-        // when scroll position increases by at least 5, load next images
-        if (imagesIndex > this.state.scrollPosition + 4) {
+        const preloadLeadCount = 5
+        // when scroll position increases by at least preloadLeadCount, load next images
+        if (imagesIndex >= this.state.scrollPosition + preloadLeadCount) {
             this.setState({
                 images: setIsLoaded(this.state.images, imagesIndex, false, true),
                 scrollPosition: imagesIndex,
             })
         }
 
-        // when scroll position decreases by at least 5, load previous images
-        if (imagesIndex < this.state.scrollPosition - 4) {
+        // when scroll position decreases by at least preloadLeadCount, load previous images
+        if (imagesIndex <= this.state.scrollPosition - preloadLeadCount) {
             this.setState({
                 images: setIsLoaded(this.state.images, imagesIndex, true, false),
                 scrollPosition: imagesIndex,

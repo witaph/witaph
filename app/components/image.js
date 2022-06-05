@@ -24,9 +24,6 @@ class Image extends React.Component {
 
 				if (isIntersecting) {
 					this.props.updateScrollPosition(this.props.idx)
-					if (this.observer) {
-						this.observer = this.observer.disconnect()
-					}
 				}
 			})
 		}, {
@@ -37,31 +34,13 @@ class Image extends React.Component {
 		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps) {
 		if (this.props.isLoaded) {
 			if (!this.element.src || this.props.src != this.state.loadedSource) {
 				this.element.src = this.props.src
 				this.setState({ loadedSource: this.props.src })
 			}
 		}
-
-		this.observer = new IntersectionObserver(entries => {
-			entries.forEach(entry => {
-				const { isIntersecting, intersectionRatio } = entry
-
-				if (isIntersecting) {
-					this.props.updateScrollPosition(this.props.idx)
-					if (this.observer) {
-						this.observer = this.observer.disconnect()
-					}
-				}
-			})
-		}, {
-			root: null,
-			threshold: 0.01,
-		})
-
-		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
 	goToUpdatePage() {
