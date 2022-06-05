@@ -6,7 +6,8 @@ import Image from './image'
 import ImageFilters from './imageFilters'
 import { apiBaseUrl } from '../constants'
 
-const countToPreload = 10
+const preloadBatchSize = 10
+const preloadLeadCount = 5
 
 const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     const images = [...imagesPreload]
@@ -16,7 +17,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadBefore) {
         let count = 0
         let index = startIndex - 1
-        while (index >= 0 && count < countToPreload) {
+        while (index >= 0 && count < preloadBatchSize) {
             images[index].isLoaded = true
             count++
             index--
@@ -26,7 +27,7 @@ const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     if (loadAfter) {
         let count = 0
         let index = startIndex + 1
-        while (index < images.length && count < countToPreload) {
+        while (index < images.length && count < preloadBatchSize) {
             images[index].isLoaded = true
             count++
             index++
@@ -120,7 +121,6 @@ export default class ImageFeed extends React.Component {
             return
         }
 
-        const preloadLeadCount = 5
         // when scroll position increases by at least preloadLeadCount, load next images
         if (imagesIndex >= this.state.scrollPosition + preloadLeadCount) {
             this.setState({

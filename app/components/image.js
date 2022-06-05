@@ -34,7 +34,7 @@ class Image extends React.Component {
 		this.observer.observe(document.querySelector("#imgWrapper" + this.props.imageID))
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate() {
 		if (this.props.isLoaded) {
 			if (!this.element.src || this.props.src != this.state.loadedSource) {
 				this.element.src = this.props.src
