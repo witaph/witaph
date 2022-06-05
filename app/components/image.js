@@ -49,10 +49,10 @@ class Image extends React.Component {
 
 	render() {
 		return (
-			<div id={'imgWrapper' + this.props.imageID} style={{minHeight: '400px'}} key={this.props.key}>
+			<div className="img-wrapper" id={'imgWrapper' + this.props.imageID} key={this.props.key}>
 				<img
+					className="feed-image"
 					ref={el => this.element = el}
-					style={{maxWidth: '100%', maxHeight:'700px', width: 'auto', height: 'auto'}}
 					onClick={this.props.isVerified ? this.goToUpdatePage : undefined}
 					key={this.props.key}
 				/>

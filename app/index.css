@@ -7,6 +7,17 @@ img {
 	height: 100%;
 }
 
+.feed-image {
+	max-width: 100%;
+	max-height:700px;
+	width: auto;
+	height: auto;
+}
+
+.img-wrapper {
+	min-height: 300px;
+}
+
 .sidebar {
 	position: fixed;
 	left: -205px;
