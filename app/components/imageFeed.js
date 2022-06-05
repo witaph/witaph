@@ -71,8 +71,9 @@ export default class ImageFeed extends React.Component {
         const verifyRes = await fetch(`${apiBaseUrl}/verifyLogin`, {
             headers: { 'x-access-token': localStorage.getItem('token') }
         })
+        const verifyJson = await verifyRes.json()
 
-        if (verifyRes.status == 200) {
+        if (verifyJson.success) {
             initialState.isVerified = true
         }
 
