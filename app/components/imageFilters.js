@@ -191,12 +191,12 @@ export default class ImageFilters extends React.Component {
 						/>
 					</label>
 					<label>
-						Must have
+						Must have&nbsp;
 						<select onChange={this.handleWhichTagsChange} value={this.state.whichTags}>
 							<option value="all">all</option>
 							<option value="any">any</option>
 						</select>
-						of these tags
+						&nbsp;of these tags
 					</label>
 					<br/>
 					<br/>
