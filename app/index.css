@@ -57,10 +57,6 @@ img {
 	left: 0;
 }
 
-.content.open {
-	left: 200px;
-}
-
 .sidebar-toggle.open {
 	visibility: hidden;
 	opacity: 0;
