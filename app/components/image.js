@@ -7,15 +7,18 @@ class Image extends React.Component {
 		super(props)
 		this.state = {
 			loadedSource: null,
+			isHovered: false,
 		}
 
 		this.goToUpdatePage = this.goToUpdatePage.bind(this)
+		this.mouseEnter = this.mouseEnter.bind(this)
+		this.mouseLeave = this.mouseLeave.bind(this)
 	}
 
 	componentDidMount() {
 		if (this.props.isLoaded) {
-			this.element.src = this.props.src
-			this.setState({ loadedSource: this.props.src })
+			this.element.src = this.props.sourceURL
+			this.setState({ loadedSource: this.props.sourceURL })
 		}
 
 		this.observer = new IntersectionObserver(entries => {
@@ -36,11 +39,19 @@ class Image extends React.Component {
 
 	componentDidUpdate() {
 		if (this.props.isLoaded) {
-			if (!this.element.src || this.props.src != this.state.loadedSource) {
-				this.element.src = this.props.src
-				this.setState({ loadedSource: this.props.src })
+			if (!this.element.src || this.props.sourceURL != this.state.loadedSource) {
+				this.element.src = this.props.sourceURL
+				this.setState({ loadedSource: this.props.sourceURL })
 			}
 		}
+	}
+
+	mouseEnter() {
+		this.setState({ isHovered: true })
+	}
+
+	mouseLeave() {
+		this.setState({ isHovered: false })
 	}
 
 	goToUpdatePage() {
@@ -49,13 +60,24 @@ class Image extends React.Component {
 
 	render() {
 		return (
-			<div className="img-wrapper" id={'imgWrapper' + this.props.imageID} key={this.props.key}>
-				<img
-					className="feed-image"
-					ref={el => this.element = el}
-					onClick={this.props.isVerified ? this.goToUpdatePage : undefined}
-					key={this.props.key}
-				/>
+			<div className="wrapper-wrapper">
+				<div className="img-wrapper" id={'imgWrapper' + this.props.imageID} key={this.props.key}>
+					<img
+						className="feed-image"
+						ref={el => this.element = el}
+						onClick={this.props.isVerified ? this.goToUpdatePage : undefined}
+						key={this.props.key}
+						onMouseEnter={this.mouseEnter}
+						onMouseLeave={this.mouseLeave}
+					/>
+					<div className="image-text">
+						{this.state.isHovered && <p>{this.props.state}, {this.props.country}</p>}
+						{this.state.isHovered && <p>Tags: {this.props.tags && this.props.tags.map((tag, tagIndex) =>
+							tagIndex === 0 ? `${tag}` : `, ${tag}`
+						)
+						}</p>}
+					</div>
+				</div>
 			</div>
 		)
 	}

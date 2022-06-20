@@ -148,15 +148,11 @@ export default class ImageFeed extends React.Component {
                 />
                 <div className={this.state.sidebarOpen ? 'content open' : 'content'} id='container' onClick={this.closeSidebar}>
                     {this.state && this.state.images && this.state.images.map((imageData, imagesIndex) => <Image
-                        src={imageData.sourceURL}
-                        name={imageData.name}
-                        tags={imageData.tags}
                         idx={imagesIndex}
-                        imageID={imageData.imageID}
-                        isLoaded={imageData.isLoaded}
                         isVerified={this.state.isVerified}
                         updateScrollPosition={this.updateScrollPosition}
                         key={imagesIndex}
+                        { ...imageData }
                     />)}
                 </div>
             </div>

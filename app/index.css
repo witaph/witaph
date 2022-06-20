@@ -5,6 +5,11 @@ img {
 	margin-bottom: 10px;
 	width: auto;
 	height: 100%;
+	opacity: 1;
+}
+
+.feed-image:hover {
+	opacity: .5;
 }
 
 .feed-image {
@@ -14,8 +19,21 @@ img {
 	height: auto;
 }
 
+.wrapper-wrapper {
+	text-align: center;
+}
+
 .img-wrapper {
+	position: relative;
 	min-height: 250px;
+}
+
+.image-text {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	width: 100%;
 }
 
 .sidebar {
@@ -46,7 +64,7 @@ label {
 	opacity: 1;
 	transition: visibility 0s, opacity 0.5s ease-in-out;
 	position: fixed;
-	left: 0px;
+	left: 5px;
 	top: 0px;
 	height: 52px;
 	width: 52px;
