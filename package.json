@@ -1,6 +1,6 @@
 {
   "name": "witaph",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "homepage": "http://witaph.com",
@@ -12,8 +12,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create": "webpack",
-    "start": "webpack-dev-server --open"
+    "create": "npm run generate-meta-tag && webpack",
+    "start": "webpack-dev-server --open",
+    "generate-meta-tag": "node ./node_modules/react-cache-buster/dist/generate-meta-tag.js"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,8 @@
     "file-loader": "^6.2.0",
     "intersection-observer": "^0.11.0",
     "moment": "^2.29.3",
-    "react": "^16.14.0",
+    "react": "^17.0.2",
+    "react-cache-buster": "^0.1.6",
     "react-dom": "^16.14.0",
     "react-router-dom": "^6.3.0",
     "react-tag-autocomplete": "^6.3.0",
