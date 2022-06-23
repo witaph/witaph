@@ -1,42 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { apiBaseUrl } from '../../constants'
+import { setUserName, setPassword, submitLogin } from './slice'
 import LoginView from './view'
 
 export default () => {
-	const [userName, setUserName] = useState('')
-	const [password, setPassword] = useState('')
-	const [error, setError] = useState(null)
+	const {
+		userName,
+		password,
+		error,
+		accessToken,
+	} = useSelector(state => state.login)
+	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const handleNameChange = (event) => { setUserName(event.target.value) }
-	const handlePassChange = (event) => { setPassword(event.target.value) }
+	useEffect(() => {
+		if (accessToken) {
+			localStorage.setItem('token', accessToken)
+			navigate('../addImage', { replace: true })
+		}
+	})
+
+	const handleNameChange = (event) => { dispatch(setUserName(event.target.value)) }
+	const handlePassChange = (event) => { dispatch(setPassword(event.target.value)) }
 	const handleSubmit = (event) => {
 		event.preventDefault()
-
-		// call login api
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				userName,
-				password,
-			})
-		}
-
-		fetch(`${apiBaseUrl}/login`, requestOptions)
-			.then(response => response.json())
-			.then(data => {
-				if(data.accessToken) {
-					// save JWT and redirect to admin page
-					localStorage.setItem('token', data.accessToken)
-					navigate('../addImage', { replace: true })
-				} else {
-					// display error
-					setError('Login failed')
-				}
-			})
+		dispatch(submitLogin({ userName, password }))
 	} 
 
 	return (
