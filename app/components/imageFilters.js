@@ -1,6 +1,6 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactTags from 'react-tag-autocomplete'
+import Autocomplete from "@mui/material/Autocomplete"
+import { TextField } from '@mui/material'
 import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
@@ -40,20 +40,16 @@ export default class ImageFilters extends React.Component {
 			whichTags: 'all',
 			existingTags: [],
 			error: null,
-			mostRecentAddtime: moment(),
 			showInfo: false,
 		}
 
 		this.handleCapturedAfterChange = this.handleCapturedAfterChange.bind(this)
 		this.handleCapturedBeforeChange = this.handleCapturedBeforeChange.bind(this)
 		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
-		this.handleTagDelete = this.handleTagDelete.bind(this)
-		this.handleTagAdd = this.handleTagAdd.bind(this)
+		this.handleTagsChange = this.handleTagsChange.bind(this)
 		this.handleWhichTagsChange = this.handleWhichTagsChange.bind(this)
 		this.toggleInfo = this.toggleInfo.bind(this)
 		this.submitFilters = this.submitFilters.bind(this)
-
-		this.reactTags = React.createRef()
 	}
 
 	async componentDidMount() {
@@ -97,24 +93,8 @@ export default class ImageFilters extends React.Component {
 		})
 	}
 
-	handleTagAdd(tag) {
-		const tags = [].concat(this.state.tags, tag)
-		this.setState({
-			tags,
-			mostRecentAddTime: moment()
-		})
-	}
-
-	handleTagDelete(index) {
-		// prevent erroneous deletes triggered by the same click as an add
-		if (moment().diff(this.state.mostRecentAddTime, 'seconds') > 1) {
-			const tags = this.state.tags.slice(0)
-			tags.splice(index, 1)
-
-			this.setState({
-				tags,
-			})
-		}
+	handleTagsChange(tags) {
+		this.setState({ tags })
 	}
 
 	handleWhichTagsChange(event) {
@@ -132,14 +112,21 @@ export default class ImageFilters extends React.Component {
 	submitFilters(event) {
 		event.preventDefault()
 
-		if (this.state.capturedAfter && this.state.capturedAfter.length
-			&& !moment(this.state.capturedAfter, 'YYYY-MM-DD').isValid()) {
+		const {
+			capturedAfter,
+			capturedBefore,
+			captureState,
+			tags,
+		} = this.state
+
+		if (capturedAfter && capturedAfter.length
+			&& !moment(capturedAfter, 'YYYY-MM-DD').isValid()) {
 			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
 			return
 		}
 
-		if (this.state.capturedBefore && this.state.capturedBefore.length
-			&& !moment(this.state.capturedBefore, 'YYYY-MM-DD').isValid()) {
+		if (capturedBefore && capturedBefore.length
+			&& !moment(capturedBefore, 'YYYY-MM-DD').isValid()) {
 			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
 			return
 		}
@@ -148,7 +135,12 @@ export default class ImageFilters extends React.Component {
 			error: null
 		})
 
-		this.props.filterImages(this.state)
+		this.props.filterImages({
+			capturedAfter,
+			capturedBefore,
+			captureState,
+			tags,
+		})
 	}
 
 	render() {
@@ -179,16 +171,14 @@ export default class ImageFilters extends React.Component {
 					<label>
 						Tags:
 						<br/>
-						<ReactTags
-							ref={this.reactTags}
-							tags={this.state.tags}
-							suggestions={this.state.existingTags}
-							suggestionsTransform={tagSuggestionsTransform}
-							onDelete={this.handleTagDelete}
-							onAddition={this.handleTagAdd}
-							allowNew={false}
-							minQueryLength={0}
-						/>
+						<Autocomplete
+							multiple
+							id="tags"
+							options={this.state.existingTags}
+							getOptionLabel={(option) => option.name}
+							renderInput={(params) => <TextField {...params} placeholder="Add tags" />}
+							onChange={(event, value) => this.handleTagsChange(value)}
+						/>	
 					</label>
 					<label>
 						Must have&nbsp;

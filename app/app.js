@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { version } from '../package.json'
+import packageJson from '../package.json'
 import CacheBuster from 'react-cache-buster'
 
 import ImageFeed from './components/imageFeed'
@@ -14,7 +14,7 @@ class App extends React.Component {
     render () {
         return (
             <CacheBuster
-                currentVersion={version}
+                currentVersion={packageJson.version}
                 isEnabled={true}
                 isVerboseMode={true}
             >

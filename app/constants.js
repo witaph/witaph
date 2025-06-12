@@ -1,1 +1,1 @@
-export const apiBaseUrl = 'http://witaph.com/api'
+export const apiBaseUrl = 'https://witaph.com/api'

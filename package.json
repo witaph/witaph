@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "",
   "main": "index.js",
-  "homepage": "http://witaph.com",
+  "homepage": "https://witaph.com",
   "babel": {
     "presets": [
       "@babel/preset-env",
@@ -21,14 +21,17 @@
   "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.18.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.1.1",
+    "@mui/styled-engine": "^7.1.1",
     "intersection-observer": "^0.11.0",
     "moment": "^2.29.3",
     "react": "^18.2.0",
-    "react-cache-buster": "^0.1.6",
+    "react-cache-buster": "^0.1.8",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.2",
-    "react-router-dom": "^6.3.0",
-    "react-tag-autocomplete": "^6.3.0"
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.12",
@@ -41,14 +44,14 @@
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^6.4.0",
     "css-loader": "^3.6.0",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.6.3",
     "jest": "^28.1.1",
     "jest-environment-jsdom": "^28.1.1",
     "redux": "^4.2.0",
     "style-loader": "^1.3.0",
     "url-loader": "^4.1.1",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.3"
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }

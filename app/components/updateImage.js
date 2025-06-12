@@ -1,11 +1,13 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import ReactTags from 'react-tag-autocomplete'
 import moment from 'moment'
+import { Autocomplete, createFilterOptions } from '@mui/material'
+import { TextField } from '@mui/material'
 
 import { apiBaseUrl } from '../constants'
 import "./react-tags-styles.css"
+
+const filter = createFilterOptions()
 
 class UpdateImage extends React.Component {
 	constructor(props) {
@@ -30,10 +32,7 @@ class UpdateImage extends React.Component {
 		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
 		this.handleCountryChange = this.handleCountryChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
-		this.handleTagDelete = this.handleTagDelete.bind(this)
-		this.handleTagAdd = this.handleTagAdd.bind(this)
-
-		this.reactTags = React.createRef()
+		this.handleTagsChange = this.handleTagsChange.bind(this)
 	}
 
 	async componentDidMount() {
@@ -124,21 +123,8 @@ class UpdateImage extends React.Component {
 		})
 	}
 
-	handleTagAdd(tag) {
-		const tags = [].concat(this.state.tags, tag)
-		
-		this.setState({
-			tags,
-		})
-	}
-
-	handleTagDelete(index) {
-		const tags = this.state.tags.slice(0)
-		tags.splice(index, 1)
-
-		this.setState({
-			tags,
-		})
+	handleTagsChange(tags) {
+		this.setState({ tags })
 	}
 
 	handleSubmit(event) {
@@ -229,14 +215,28 @@ class UpdateImage extends React.Component {
 					<br/>
 					<label>
 						Tags: 
-						<ReactTags
-							ref={this.reactTags}
-							tags={this.state.tags}
-							suggestions={this.state.existingTags}
-							onDelete={this.handleTagDelete}
-							onAddition={this.handleTagAdd}
-							allowNew={true}
-							minQueryLength={0}
+						<Autocomplete
+							multiple
+							id="tags"
+							options={this.state.existingTags}
+							getOptionLabel={(option) => option.name}
+							renderInput={(params) => <TextField {...params} placeholder="Add tags" />}
+							onChange={(event, value) => this.handleTagsChange(value)}
+							value={this.state.tags}
+							filterOptions={(options, params) => {
+								const filtered = filter(options, params);
+						
+								const { inputValue } = params;
+								// Suggest the creation of a new value
+								const isExisting = options.some((option) => inputValue === option.name);
+								if (inputValue !== '' && !isExisting) {
+								  filtered.push({
+									name: inputValue
+								  });
+								}
+						
+								return filtered;
+							}}
 						/>
 					</label>
 					<br/>
