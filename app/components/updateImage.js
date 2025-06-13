@@ -1,8 +1,11 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import moment from 'moment'
 import { Autocomplete, createFilterOptions } from '@mui/material'
 import { TextField } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
 import "./react-tags-styles.css"
@@ -17,7 +20,7 @@ class UpdateImage extends React.Component {
 			sourceURL: '',
 			sourceURL2: '',
 			name: '',
-			dateCaptured: '',
+			dateCaptured: null,
 			captureState: '',
 			captureCountry: '',
 			tags: [],
@@ -28,7 +31,6 @@ class UpdateImage extends React.Component {
 		this.handleSourceChange = this.handleSourceChange.bind(this)
 		this.handleSource2Change = this.handleSource2Change.bind(this)
 		this.handleNameChange = this.handleNameChange.bind(this)
-		this.handleDateChange = this.handleDateChange.bind(this)
 		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
 		this.handleCountryChange = this.handleCountryChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -57,7 +59,7 @@ class UpdateImage extends React.Component {
 				sourceURL: imageWithTagsJson.sourceURL,
 				sourceURL2: imageWithTagsJson.sourceURL2 || '',
 				name: imageWithTagsJson.name || '',
-				dateCaptured: moment(imageWithTagsJson.dateCaptured, 'YYYY-MM-DD').format('YYYY-MM-DD'),
+				dateCaptured: moment(imageWithTagsJson.dateCaptured, 'YYYY-MM-DD'),
 				captureState: imageWithTagsJson.state || '',
 				captureCountry: imageWithTagsJson.country || '',
 				tags: imageWithTagsJson.tags || [],
@@ -105,12 +107,6 @@ class UpdateImage extends React.Component {
 		})
 	}
 
-	handleDateChange(event) {
-		this.setState({
-			dateCaptured: event.target.value,
-		})
-	}
-
 	handleCaptureStateChange(event) {
 		this.setState({
 			captureState: event.target.value,
@@ -136,13 +132,8 @@ class UpdateImage extends React.Component {
 			return
 		}
 
-		if (!this.state.dateCaptured || !this.state.dateCaptured.length) {
+		if (!this.state.dateCaptured) {
 			this.setState({ error: 'Date Captured is required' })
-			return
-		}
-
-		if (!moment(this.state.dateCaptured, 'YYYY-MM-DD').isValid()) {
-			this.setState({ error: 'Date Captured must be provided in YYYY-MM-DD format' })
 			return
 		}
 
@@ -157,7 +148,7 @@ class UpdateImage extends React.Component {
 				sourceURL: this.state.sourceURL,
 				sourceURL2: this.state.sourceURL2,
 				name: this.state.name,
-				dateCaptured: this.state.dateCaptured,
+				dateCaptured: this.state.dateCaptured.format('YYYY-MM-DD'),
 				captureState: this.state.captureState,
 				captureCountry: this.state.captureCountry,
 				tags: this.state.tags,
@@ -198,10 +189,16 @@ class UpdateImage extends React.Component {
 						<input type="text" value={this.state.name} onChange={this.handleNameChange} />
 					</label>
 					<br/>
-					<label>
-						Date Captured: 
-						<input type="text" value={this.state.dateCaptured} onChange={this.handleDateChange} />
-					</label>
+					<br/>
+					<LocalizationProvider dateAdapter={AdapterMoment}>
+						<DatePicker
+							label="Captured after date"
+							value={this.state.dateCaptured}
+							onChange={(newValue) => {
+								this.setState({ dateCaptured: newValue })
+							}}
+						/>
+					</LocalizationProvider>
 					<br/>
 					<label>
 						State/Province: 

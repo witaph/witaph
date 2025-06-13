@@ -10,6 +10,9 @@ const preloadLeadCount = 5
 
 const setIsLoaded = (imagesPreload, startIndex, loadBefore, loadAfter) => {
     const images = [...imagesPreload]
+    if (!images.length) {
+        return images
+    }
     
     images[startIndex].isLoaded = true
 
@@ -93,12 +96,20 @@ export default class ImageFeed extends React.Component {
     }
 
     async filterImages(filters) {
+        const { capturedAfter, capturedBefore, captureState, tags, whichTags } = filters
+
         const requestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(filters),
+            body: JSON.stringify({
+                capturedAfter: capturedAfter ? capturedAfter.format('YYYY-MM-DD') : '',
+                capturedBefore: capturedBefore ? capturedBefore.format('YYYY-MM-DD') : '',
+                captureState,
+                tags,
+                whichTags,
+            }),
         }
 
         const imagesRes = await fetch(`${apiBaseUrl}/images`, requestOptions)

@@ -1,7 +1,9 @@
 import React from 'react'
 import Autocomplete from "@mui/material/Autocomplete"
 import { TextField } from '@mui/material'
-import moment from 'moment'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { apiBaseUrl } from '../constants'
 import hamburgerIcon from '../img/Hamburger_icon.png'
@@ -33,18 +35,15 @@ export default class ImageFilters extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			capturedAfter: '',
-			capturedBefore: '',
+			capturedAfter: null,
+			capturedBefore: null,
 			captureState: '',
 			tags: [],
 			whichTags: 'all',
 			existingTags: [],
-			error: null,
 			showInfo: false,
 		}
 
-		this.handleCapturedAfterChange = this.handleCapturedAfterChange.bind(this)
-		this.handleCapturedBeforeChange = this.handleCapturedBeforeChange.bind(this)
 		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
 		this.handleTagsChange = this.handleTagsChange.bind(this)
 		this.handleWhichTagsChange = this.handleWhichTagsChange.bind(this)
@@ -72,18 +71,6 @@ export default class ImageFilters extends React.Component {
 
 		this.setState({
 			existingTags,
-		})
-	}
-
-	handleCapturedAfterChange(event) {
-		this.setState({
-			capturedAfter: event.target.value,
-		})
-	}
-
-	handleCapturedBeforeChange(event) {
-		this.setState({
-			capturedBefore: event.target.value,
 		})
 	}
 
@@ -119,22 +106,6 @@ export default class ImageFilters extends React.Component {
 			tags,
 		} = this.state
 
-		if (capturedAfter && capturedAfter.length
-			&& !moment(capturedAfter, 'YYYY-MM-DD').isValid()) {
-			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
-			return
-		}
-
-		if (capturedBefore && capturedBefore.length
-			&& !moment(capturedBefore, 'YYYY-MM-DD').isValid()) {
-			this.setState({ error: 'Dates must be provided in YYYY-MM-DD format' })
-			return
-		}
-
-		this.setState({
-			error: null
-		})
-
 		this.props.filterImages({
 			capturedAfter,
 			capturedBefore,
@@ -150,16 +121,24 @@ export default class ImageFilters extends React.Component {
 				<br/>
 				<br/>
 				<form onSubmit={this.submitFilters}>
-					<label>
-						Captured after date:
-						<input type="text" value={this.state.capturedAfter} onChange={this.handleCapturedAfterChange} />
-					</label>
-					<br/>
-					<br/>
-					<label>
-						Captured before date:
-						<input type="text" value={this.state.capturedBefore} onChange={this.handleCapturedBeforeChange} />
-					</label>
+					<LocalizationProvider dateAdapter={AdapterMoment}>
+						<DatePicker
+							label="Captured after date"
+							value={this.state.capturedAfter}
+							onChange={(newValue) => {
+								this.setState({ capturedAfter: newValue })
+							}}
+						/>
+						<br/>
+						<br/>
+						<DatePicker
+							label="Captured before date"
+							value={this.state.capturedBefore}
+							onChange={(newValue) => {
+								this.setState({ capturedBefore: newValue })
+							}}
+						/>
+					</LocalizationProvider>
 					<br/>
 					<br/>
 					<label>
@@ -193,9 +172,8 @@ export default class ImageFilters extends React.Component {
 					<input type="submit" value="Apply Filters" onChange={this.submitFilters} />
 				</form>
 				<br/>
-				{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
 				<img src={infoIcon} onClick={this.toggleInfo} className={this.props.isOpen ? 'info-icon open' : 'info-icon'} />
-				{this.state.showInfo && <p>All fields are optional. Dates expected in YYYY-MM-DD format, State/Province in shorthand format (CA, UT, AZ, etc) </p>}
+				{this.state.showInfo && <p>All fields are optional. State/Province in shorthand format (CA, UT, AZ, etc) </p>}
 
 				<img src={hamburgerIcon} onClick={this.props.openSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'} />
 			</div>
