@@ -1,14 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Autocomplete, createFilterOptions } from '@mui/material'
-import { TextField } from '@mui/material'
+import { TextField, Button, Box } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment'
 
 import { apiBaseUrl } from '../constants'
-import "./react-tags-styles.css"
 
 const filter = createFilterOptions()
 
@@ -174,22 +173,25 @@ class UpdateImage extends React.Component {
 		return (
 			<div>
 				<form onSubmit={this.handleSubmit}>
-					<label>
-						Image Source URL: 
-						<input type="text" value={this.state.sourceURL} onChange={this.handleSourceChange} />
-					</label>
+					<TextField
+						label="Image Source URL"
+						value={this.state.sourceURL}
+						onChange={this.handleSourceChange}
+						fullWidth
+					/>
 					<br/>
-					<label>
-						Backup Source URL: 
-						<input type="text" value={this.state.sourceURL2} onChange={this.handleSource2Change} />
-					</label>
+					<TextField
+						label="Backup Source URL"
+						value={this.state.sourceURL2}
+						onChange={this.handleSource2Change}
+						fullWidth
+					/>
 					<br/>
-					<label>
-						Name: 
-						<input type="text" value={this.state.name} onChange={this.handleNameChange} />
-					</label>
-					<br/>
-					<br/>
+					<TextField
+						label="Image Name"
+						value={this.state.name}
+						onChange={this.handleNameChange}
+					/>
 					<LocalizationProvider dateAdapter={AdapterMoment}>
 						<DatePicker
 							label="Captured after date"
@@ -200,44 +202,42 @@ class UpdateImage extends React.Component {
 						/>
 					</LocalizationProvider>
 					<br/>
-					<label>
-						State/Province: 
-						<input type="text" value={this.state.captureState} onChange={this.handleCaptureStateChange} />
-					</label>
+					<TextField
+						label="State/Province"
+						value={this.state.captureState}
+						onChange={this.handleCaptureStateChange}
+					/>
+					<TextField
+						label="Country"
+						value={this.state.captureCountry}
+						onChange={this.handleCountryChange}
+					/>
 					<br/>
-					<label>
-						Country: 
-						<input type="text" value={this.state.captureCountry} onChange={this.handleCountryChange} />
-					</label>
+					<Autocomplete
+						multiple
+						id="tags"
+						options={this.state.existingTags}
+						getOptionLabel={(option) => option.name}
+						renderInput={(params) => <TextField label="Tags" {...params} />}
+						onChange={(event, value) => this.handleTagsChange(value)}
+						value={this.state.tags}
+						filterOptions={(options, params) => {
+							const filtered = filter(options, params);
+					
+							const { inputValue } = params;
+							// Suggest the creation of a new value
+							const isExisting = options.some((option) => inputValue === option.name);
+							if (inputValue !== '' && !isExisting) {
+								filtered.push({
+								name: inputValue
+								});
+							}
+					
+							return filtered;
+						}}
+					/>
 					<br/>
-					<label>
-						Tags: 
-						<Autocomplete
-							multiple
-							id="tags"
-							options={this.state.existingTags}
-							getOptionLabel={(option) => option.name}
-							renderInput={(params) => <TextField {...params} placeholder="Add tags" />}
-							onChange={(event, value) => this.handleTagsChange(value)}
-							value={this.state.tags}
-							filterOptions={(options, params) => {
-								const filtered = filter(options, params);
-						
-								const { inputValue } = params;
-								// Suggest the creation of a new value
-								const isExisting = options.some((option) => inputValue === option.name);
-								if (inputValue !== '' && !isExisting) {
-								  filtered.push({
-									name: inputValue
-								  });
-								}
-						
-								return filtered;
-							}}
-						/>
-					</label>
-					<br/>
-					<input type="submit" value="Update Image" onChange={this.handleSubmit} />
+					<Button variant="contained" onClick={this.handleSubmit}>Update Image</Button>
 					{this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
 				</form>
 			</div>

@@ -1,6 +1,6 @@
 import React from 'react'
-import Autocomplete from "@mui/material/Autocomplete"
-import { TextField } from '@mui/material'
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete"
+import { TextField, Button } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -9,27 +9,9 @@ import { apiBaseUrl } from '../constants'
 import hamburgerIcon from '../img/Hamburger_icon.png'
 import infoIcon from '../img/info_icon.png'
 
-const preferredTags = ['jade', 'ambulance', 'national park', 'wildlife']
-
-const tagSuggestionsTransform = (query, suggestions) => {
-	const escapedQuery = query.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')
-	const matchPartial = new RegExp(`(?:^|\\s)${escapedQuery}`, 'i')
-
-	const partialMatches = suggestions.filter(tag => matchPartial.test(tag.name))
-
-	const preferredSuggestions = []
-	const otherSuggestions = []
-
-	partialMatches.map(tag => {
-		if (preferredTags.includes(tag.name)) {
-			preferredSuggestions.push(tag)
-		} else {
-			otherSuggestions.push(tag)
-		}
-	})
-
-	return preferredSuggestions.concat(otherSuggestions)
-}
+const filterOptions = createFilterOptions({
+	matchFrom: 'start',
+})
 
 export default class ImageFilters extends React.Component {
 	constructor(props) {
@@ -44,7 +26,6 @@ export default class ImageFilters extends React.Component {
 			showInfo: false,
 		}
 
-		this.handleCaptureStateChange = this.handleCaptureStateChange.bind(this)
 		this.handleTagsChange = this.handleTagsChange.bind(this)
 		this.handleWhichTagsChange = this.handleWhichTagsChange.bind(this)
 		this.toggleInfo = this.toggleInfo.bind(this)
@@ -71,12 +52,6 @@ export default class ImageFilters extends React.Component {
 
 		this.setState({
 			existingTags,
-		})
-	}
-
-	handleCaptureStateChange(event) {
-		this.setState({
-			captureState: event.target.value,
 		})
 	}
 
@@ -117,9 +92,7 @@ export default class ImageFilters extends React.Component {
 	render() {
 		return (
 			<div className={this.props.isOpen ? 'sidebar open' : 'sidebar'}>
-				<b>Filter images:</b>
-				<br/>
-				<br/>
+				<b>Filter images</b>
 				<form onSubmit={this.submitFilters}>
 					<LocalizationProvider dateAdapter={AdapterMoment}>
 						<DatePicker
@@ -128,37 +101,36 @@ export default class ImageFilters extends React.Component {
 							onChange={(newValue) => {
 								this.setState({ capturedAfter: newValue })
 							}}
+							slotProps={{
+								textField: { margin: 'normal' }
+							}}
 						/>
-						<br/>
-						<br/>
 						<DatePicker
 							label="Captured before date"
 							value={this.state.capturedBefore}
 							onChange={(newValue) => {
 								this.setState({ capturedBefore: newValue })
 							}}
+							slotProps={{
+								textField: { margin: 'normal' }
+							}}
 						/>
 					</LocalizationProvider>
-					<br/>
-					<br/>
-					<label>
-						State/Province:
-						<input type="text" value={this.state.captureState} onChange={this.handleCaptureStateChange} />
-					</label>
-					<br/>
-					<br/>
-					<label>
-						Tags:
-						<br/>
-						<Autocomplete
-							multiple
-							id="tags"
-							options={this.state.existingTags}
-							getOptionLabel={(option) => option.name}
-							renderInput={(params) => <TextField {...params} placeholder="Add tags" />}
-							onChange={(event, value) => this.handleTagsChange(value)}
-						/>	
-					</label>
+					<TextField
+						label="State/Province"
+						value={this.state.captureState}
+						onChange={(event) => this.setState({ captureState: event.target.value })}
+						margin="normal"
+					/>
+					<Autocomplete
+						multiple
+						id="tags"
+						options={this.state.existingTags}
+						getOptionLabel={(option) => option.name}
+						renderInput={(params) => <TextField margin="normal" label="Tags" {...params} />}
+						onChange={(event, value) => this.handleTagsChange(value)}
+						filterOptions={filterOptions}
+					/>
 					<label>
 						Must have&nbsp;
 						<select onChange={this.handleWhichTagsChange} value={this.state.whichTags}>
@@ -168,12 +140,11 @@ export default class ImageFilters extends React.Component {
 						&nbsp;of these tags
 					</label>
 					<br/>
-					<br/>
-					<input type="submit" value="Apply Filters" onChange={this.submitFilters} />
+					<Button variant="contained" onClick={this.submitFilters}>Apply Filters</Button>
 				</form>
 				<br/>
 				<img src={infoIcon} onClick={this.toggleInfo} className={this.props.isOpen ? 'info-icon open' : 'info-icon'} />
-				{this.state.showInfo && <p>All fields are optional. State/Province in shorthand format (CA, UT, AZ, etc) </p>}
+				{this.state.showInfo && <label>All fields are optional. State/Province in shorthand format (CA, UT, AZ, etc) </label>}
 
 				<img src={hamburgerIcon} onClick={this.props.openSidebar} className={this.props.isOpen ? 'sidebar-toggle open' : 'sidebar-toggle'} />
 			</div>
